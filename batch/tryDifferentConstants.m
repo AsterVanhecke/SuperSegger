@@ -62,7 +62,7 @@ phase = intCropImage (tempImage);
 
 
 numFlags = numel(resFlags);
-numCols = 3;
+numCols = ceil(sqrt(numFlags));
 numRows = ceil(numFlags / numCols);
 
 for i = 1:numFlags
