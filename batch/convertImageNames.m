@@ -146,7 +146,7 @@ for j = 1: numel (images)
     end
     
     newFileName = [basename,elementsTime,sprintf('%05d',currentTime),elementsXY,sprintf('%03d',currentXY),elementsPhase,num2str(c)];
-    copyfile([dirOriginal,filesep,images(j).name],[dirname,filesep,newFileName,'.tif']);
+    copyfile([dirOriginal,filesep,images(j).name],[dirname,filesep,newFileName,'.tif'],'f'); % added 'f' in case destination is not writable
     
 end
 
