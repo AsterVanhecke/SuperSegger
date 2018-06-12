@@ -729,7 +729,12 @@ elseif settings_train.axisFlag == 1 || settings_train.axisFlag == 2
     if settings_train.axisFlag == 1 && numel(list) > 0
         settings_train.currentData = intMakeRegs( settings_train.currentData, settings_train.CONST, [], [] );
     end
-    saveData();
+    if isfield(settings_train,'lastSaved') && settings_train.lastSaved<15 % Only save 1 in 16 times
+        settings_train.lastSaved=settings_train.lastSaved+1;
+    else
+        saveData();
+        settings_train.lastSaved=1;
+    end
 elseif settings_train.axisFlag == 6
     plot(eventdata.IntersectionPoint(1), eventdata.IntersectionPoint(2), 'w+','MarkerSize', 30)
     drawnow;
@@ -738,7 +743,12 @@ elseif settings_train.axisFlag == 6
     saveData();
 end
 
-updateUI(settings_train.handles);
+if isfield(settings_train,'lastRefr') && settings_train.lastRefr<5 % Only refresh UI 1 in 5 times
+    settings_train.lastRefr=settings_train.lastRefr+1;
+else
+    updateUI(settings_train.handles);
+    settings_train.lastRefr=1;
+end
 
 function loadData(frameNumber)
 global settings_train;

@@ -40,12 +40,27 @@ function varargout = editSegmentsGui_OutputFcn(hObject, eventdata, handles)
 % Global functions
 
 function clickOnImage(hObject, eventdata, handles)
-global settings
+global settings data % keep data in a global variable to not waste time saving and loading it to disk
 FLAGS.im_flag = settings.handles.im_flag;
-currentData = load([settings.handles.dirname, settings.handles.contents(str2double(settings.handles.frame_no.String)).name]);
-[data, list] = updateTrainingImage(currentData, FLAGS, eventdata.IntersectionPoint(1:2));
-save([settings.handles.dirname, settings.handles.contents(str2double(settings.handles.frame_no.String)).name], '-STRUCT', 'data');
-updateUI(settings.hObject, settings.handles);
+if isempty(data) % If data was not an existing global variable, load it again.
+    data = load([settings.handles.dirname, settings.handles.contents(str2double(settings.handles.frame_no.String)).name]);
+end
+settings.curFrame=str2double(settings.handles.frame_no.String);
+[data, list] = updateTrainingImage(data, FLAGS, eventdata.IntersectionPoint(1:2));
+% since it takes 5s, only save 1 in 15 times
+if isfield(settings,'lastSav') && settings.lastSav<15 
+    settings.lastSav=settings.lastSav+1;
+else
+    save([settings.handles.dirname, settings.handles.contents(str2double(settings.handles.frame_no.String)).name], '-STRUCT', 'data');
+    settings.lastSav=1;
+end
+% since it takes 2s, only refresh 1 in 5 times
+if isfield(settings,'lastRefr') && settings.lastRefr<5 
+    settings.lastRefr=settings.lastRefr+1;
+else
+    updateUI(settings.hObject, settings.handles,0);
+    settings.lastRefr=1;
+end
 
 function data = loaderInternal(filename)
 data = load(filename);
@@ -62,12 +77,14 @@ handles.contents = dir([handles.dirname '*_seg.mat']);
 handles.num_im = length(handles.contents);
 handles.im_flag = 1;
 axis tight;
-updateUI(hObject, handles);
+updateUI(hObject, handles,1);
 
-function updateUI(hObject, handles)
-global settings
+function updateUI(hObject, handles, framechanged)
+global settings data
 delete(get(handles.axes1, 'Children'));
-data = loaderInternal([handles.dirname, handles.contents(str2double(handles.frame_no.String)).name]);
+if isempty(data) || framechanged % if global variable doesnt exist, or frame has changed, load it
+    data = loaderInternal([handles.dirname, handles.contents(str2double(handles.frame_no.String)).name]);
+end
 data.mask_cell = double((data.mask_bg - data.segs.segs_good - data.segs.segs_3n) > 0);
 showSegData(data, handles.im_flag, handles.axes1);
 settings.handles = handles;
@@ -83,15 +100,20 @@ superSeggerViewerGui();
 % Frame no.
 
 function frame_no_Callback(hObject, eventdata, handles)
+% save changes in current frame
+global settings data
+if ~isempty(data) && isfield(settings,'curFrame')
+    save([settings.handles.dirname, settings.handles.contents(settings.curFrame).name], '-STRUCT', 'data');
+end
 c = round(str2double(handles.frame_no.String));
 if c > handles.num_im
     handles.frame_no.String = num2str(handles.num_im);
-elseif isnan(c) || c < 1;
+elseif isnan(c) || c < 1
     handles.frame_no.String = '1';
 else
     handles.frame_no.String = num2str(c);
 end
-updateUI(hObject, handles)
+updateUI(hObject, handles,1)
 
 function frame_no_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -120,19 +142,19 @@ function mask_Callback(hObject, eventdata, handles)
 handles.im_flag = 2;
 handles.phase.Value = 0;
 handles.segment.Value = 0;
-updateUI(hObject, handles)
+updateUI(hObject, handles,1)
 
 function phase_Callback(hObject, eventdata, handles)
 handles.im_flag = 3;
 handles.mask.Value = 0;
 handles.segment.Value = 0;
-updateUI(hObject, handles)
+updateUI(hObject, handles,1)
 
 function segment_Callback(hObject, eventdata, handles)
 handles.im_flag = 1;
 handles.mask.Value = 0;
 handles.phase.Value = 0;
-updateUI(hObject, handles)
+updateUI(hObject, handles,1)
 
 function relink_Callback(hObject, eventdata, handles)
 choice = questdlg('Are you sure you want to relink and remake the cell files?', 'Re-link the cells?', 'Yes', 'No', 'No');
