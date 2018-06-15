@@ -646,6 +646,9 @@ if index1 || index2
         else
             tmp_clist = gateTool(handles.multi_clist,varg{:},'merge','no clear','newfig');
             tmp_clist.name = 'all_gated';
+            if ~iscell(handles.multi_clist)
+                handles.multi_clist={handles.multi_clist};
+            end
             handles.multi_clist{end+1} = tmp_clist;
         end
     elseif isstruct(handles.multi_clist)

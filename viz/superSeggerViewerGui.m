@@ -1169,9 +1169,9 @@ if ~isempty(get(hObject, 'UserData')) && get(hObject, 'UserData') == get(hObject
     elseif strcmp('Field Movie',value)
         makeFieldMovie(handles);
     elseif strcmp('Field Mosaic',value)
-        handles = field_mosaic( handles)
-    elseif strcmp('Consensus',value);
-        handles = consensus_image(handles)
+        handles = field_mosaic( handles);
+    elseif strcmp('Consensus',value)
+        handles = consensus_image(handles);
     elseif strcmp('Consensus Kymo',value)
         handles = consensus_kymo(handles);
     end
