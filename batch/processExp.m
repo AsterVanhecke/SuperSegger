@@ -70,13 +70,13 @@ convertImageNames(dirname, basename, timeFilterBefore, ...
 %[~, list] = getConstantsList;
 % list'
 
-res = '60XEcLB';
+res = '100XPaAVreentry_'; % 60XEcLB. For weak illumination 60XEcFull might work better
 
 %% Paralell Processing Mode
 % to run code in parallel mode must have the parallel processing toolbox,
 % for convenience default is false (non-parallel)
 
-parallel_flag = false;
+parallel_flag = true;
 
 %% Load Constants
 CONST = loadConstants(res,parallel_flag) ;
