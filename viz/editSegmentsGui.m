@@ -113,6 +113,7 @@ elseif isnan(c) || c < 1
 else
     handles.frame_no.String = num2str(c);
 end
+settings.curFrame=str2double(handles.frame_no.String);
 updateUI(hObject, handles,1)
 
 function frame_no_CreateFcn(hObject, eventdata, handles)

@@ -1251,7 +1251,7 @@ else
     if numel(c) > 1
         c = c(1);
     end
-    if isempty(c) || isnan(c) || c < 1 || c > max(handles.data_c.regs.ID)
+    if isempty(c) || isnan(c) || c < 1 || c > handles.data_c.regs.num_regs
         handles.message.String = ['Invalid cell number'];
     else
         handles.kymograph_cell_no.String = num2str(c);
@@ -1276,7 +1276,7 @@ else
     if numel(c) > 1
         c = c(1);
     end
-    if isempty(c) || isnan(c) || c < 1 || c > max(handles.data_c.regs.ID)
+    if isempty(c) || isnan(c) || c < 1 || c > handles.data_c.regs.num_regs
         handles.message.String = ['Invalid cell number'];
     else
         
@@ -1310,7 +1310,7 @@ else
         if numel(c) > 1
             c = c(1);
         end
-        if isempty(c) || isnan(c) || c < 1 || c > max(handles.data_c.regs.ID)
+        if isempty(c) || isnan(c) || c < 1 || c > handles.data_c.regs.num_regs
             handles.message.String = ['Invalid cell number'];
         else
             
