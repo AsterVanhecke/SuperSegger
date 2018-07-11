@@ -580,7 +580,7 @@ comboCentroid = 0;
 comboArea = 0;
 regNums = regNums(~isnan(regNums));
 regs_labels =  data_c.regs.regs_label(bby,bbx);
-comboMask = 0 * (regs_labels);
+comboMask = zeros(size(regs_labels)); % Faster if regs_labels is large. old/slow: comboMask = 0 * (regs_labels);
 
 for ii = 1: numel(regNums)
     reg = regNums(ii);
