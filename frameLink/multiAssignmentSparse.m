@@ -322,8 +322,8 @@ if ~isempty(data_c)
         while any( flagger(:)) >0
             [~,ind] = min(costMat(:));
             assignTemp = indexF(:,ind)';
-            assignTemp = assignTemp (~isnan(assignTemp));
-            regionsInC = indexC (:,ind);
+            assignTemp = assignTemp(~isnan(assignTemp));
+            regionsInC = indexC(:,ind);
             assignments {regionsInC(1)} = assignTemp;
             if ~isnan(regionsInC(2))
                 assignments {regionsInC(2)} = assignTemp;
@@ -456,8 +456,12 @@ end
         revAssign = cell( 1, numRegs2);
         for ll = 1 : numRegs1
             tmpAss =  assignments{ll};
-            for uu = tmpAss
-                revAssign{uu} = [revAssign{uu},ll];
+            for uu = tmpAss % sometimes  tmpAss can have a zero %(tmpAss>0)
+                if uu>1
+                    revAssign{uu} = [revAssign{uu},ll];
+                else
+                    assignments{ll}(assignments{ll}==uu)=[]; % remove invalid assignment values (e.g. 0)
+                end
             end
         end
     end
